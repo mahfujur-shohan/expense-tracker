@@ -1,4 +1,26 @@
-export default function ExpenseTracker() {
+import { useState } from "react";
+
+export default function ExpenseTracker({ addTransaction }) {
+  const [type, setType] = useState("expense");
+  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
+  const [date, setDate] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const newTransaction = {
+      type,
+      category,
+      amount: parseFloat(amount),
+      date,
+    };
+    addTransaction(newTransaction);
+    setCategory("");
+    setAmount("");
+    setDate("");
+    // console.log(newTransaction);
+  }
+
   return (
     <>
       <div className="p-6 py-8 bg-[#F9FAFB] border rounded-md">
@@ -6,12 +28,22 @@ export default function ExpenseTracker() {
           Expense Tracker
         </h2>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="flex divide-x divide-slate-400/20 overflow-hidden rounded-md bg-white text-[0.8125rem] font-medium leading-5 text-slate-700 shadow-sm ring-1 ring-slate-700/10 mt-6">
-            <div className="cursor-pointer text-center flex-1 px-4 py-2 hover:bg-slate-50 hover:text-slate-900 active">
+            <div
+              className={`cursor-pointer text-center flex-1 px-4 py-2 hover:bg-slate-50 hover:text-slate-900 ${
+                type === "expense" ? "active" : ""
+              }`}
+              onClick={() => setType("expense")}
+            >
               Expense
             </div>
-            <div className="cursor-pointer text-center flex-1 px-4 py-2 hover:bg-slate-50 hover:text-slate-900">
+            <div
+              className={`cursor-pointer text-center flex-1 px-4 py-2 hover:bg-slate-50 hover:text-slate-900 ${
+                type === "income" ? "active" : ""
+              }`}
+              onClick={() => setType("income")}
+            >
               Income
             </div>
           </div>
@@ -26,18 +58,31 @@ export default function ExpenseTracker() {
             <div className="mt-2">
               <select
                 id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
                 name="category"
                 autoComplete="category-name"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
               >
-                <option>Education</option>
-                <option>Food</option>
-                <option>Health</option>
-                <option>Bill</option>
-                <option>Insurance</option>
-                <option>Tax</option>
-                <option>Transport</option>
-                <option>Telephone</option>
+                {type === "expense" ? (
+                  <>
+                    <option>Education</option>
+                    <option>Food</option>
+                    <option>Health</option>
+                    <option>Bill</option>
+                    <option>Insurance</option>
+                    <option>Tax</option>
+                    <option>Transport</option>
+                    <option>Telephone</option>
+                  </>
+                ) : (
+                  <>
+                    <option>Salary</option>
+                    <option>Outsourcing</option>
+                    <option>Bond</option>
+                    <option>Dividend</option>
+                  </>
+                )}
               </select>
             </div>
           </div>
@@ -52,6 +97,8 @@ export default function ExpenseTracker() {
             <div className="mt-2">
               <input
                 type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
                 name="amount"
                 id="amount"
                 autoComplete="off"
@@ -71,6 +118,8 @@ export default function ExpenseTracker() {
             <div className="mt-2">
               <input
                 type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
                 name="date"
                 id="date"
                 autoComplete="off"
